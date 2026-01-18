@@ -154,6 +154,11 @@ function onCharacterAdded(character)
 	if character then
 		if _G.Lasers then
 			workspace.Museum.Lights:Destroy()
+			for i, v in workspace.RobberyTomb.SpikeRoom.Spikes:GetDescendants() do
+            if v.Name == "Spikes" or v.Name == "Door" then
+                v:Destroy()
+            end
+        end
 		end
 		local humanoidRootPart = character:WaitForChild('HumanoidRootPart');
 		for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
@@ -518,6 +523,12 @@ UserInputService.InputEnded:Connect(function(key,event)
 end)
 dir = 0
 RunService.RenderStepped:Connect(function()
+	if _G.Lasers then
+        for i, v in workspace.Darts:GetChildren() do
+            v:Destroy()
+        end
+    end
+
 	if _G.carfly then
 		if game:GetService("Players").LocalPlayer.Character.Humanoid.Sit == true and FLYING == false then
 			sFLY(true)
