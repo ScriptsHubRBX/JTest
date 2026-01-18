@@ -47,6 +47,23 @@ player:Slider("Speed",0,100,24,function(value)
 	_G.speed = value
 end)
 
+local infJump
+infJumpDebounce = false
+player:Toggle("Inf Jump",false,function(value)
+	if value == true then
+		infJump = game:GetService("UserInputService").JumpRequest:Connect(function()
+	    	if not infJumpDebounce then
+	        infJumpDebounce = true
+	        game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+	        wait()
+	        infJumpDebounce = false
+	    	end
+		end)
+	else
+		infJump:Disconnect()
+	end
+end)
+
 misc:Button("Delete Doors",function(value)
 	spawn(function()
 		for i, v in workspace:GetChildren() do
@@ -154,8 +171,8 @@ function onCharacterAdded(character)
 	end
 end
 
-_G.Lasers = false
-misc:Toggle("Delete Lasers",false,function(value)
+_G.Lasers = true
+misc:Toggle("Delete Lasers",true,function(value)
 	_G.Lasers = value
 	onCharacterAdded(localPlayer.Character)
 end)
