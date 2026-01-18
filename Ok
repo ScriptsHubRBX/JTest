@@ -153,12 +153,14 @@ local localPlayer = game:GetService('Players').LocalPlayer
 function onCharacterAdded(character)
 	if character then
 		if _G.Lasers then
+			pcall(function()
 			workspace.Museum.Lights:Destroy()
 			for i, v in workspace.RobberyTomb.SpikeRoom.Spikes:GetDescendants() do
             if v.Name == "Spikes" or v.Name == "Door" then
                 v:Destroy()
             end
-        end
+        	end
+			end)
 		end
 		local humanoidRootPart = character:WaitForChild('HumanoidRootPart');
 		for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
