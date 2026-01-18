@@ -20,7 +20,7 @@ loadstring(game:HttpGet("https://pastebin.com/raw/X7x6XiUb"))()
 elseif game.PlaceId == 127707120843339 then
 loadstring(game:HttpGet("https://pastebin.com/raw/56eK7HjT"))()
 elseif game.PlaceId == 9780994092 then
-loadstring(game:HttpGet("https://pastebin.com/raw/tTnGXSrF"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ScriptsHubRBX/JTest/refs/heads/main/Tr"))()
 elseif game.PlaceId == 109652885385286 then
 loadstring(game:HttpGet("https://pastebin.com/raw/esgw1z6F"))()
 elseif game.PlaceId == 192800 then
