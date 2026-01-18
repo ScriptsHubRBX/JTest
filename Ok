@@ -135,6 +135,9 @@ end)
 local localPlayer = game:GetService('Players').LocalPlayer
 function onCharacterAdded(character)
 	if character then
+		if _G.Lasers then
+			workspace.Museum.Lights:Destroy()
+		end
 		local humanoidRootPart = character:WaitForChild('HumanoidRootPart');
 		for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
 			if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
@@ -266,24 +269,10 @@ robbers:Button("Exit Jewerly [Надо встать чтоб над голово
 	local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(.5,Enum.EasingStyle.Linear),{CFrame = CFrame.new(99, 114, 1284)})
 	tween:Play()
 end)
-robbers:Button("Exit PowerPlant",function()
-	local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(105, -4, 2112)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(105, -4, 2112)})
+robbers:Button("Exit Museum",function()
+	local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(105, -4, 2112)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(1081, 130, 1311)})
     tween:Play()
     tween.Completed:Wait()
-local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(75, -10, 2091)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(75, -5, 2091)})
-    tween:Play()
-    tween.Completed:Wait()
-    local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(-5, -3, 2122)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(-5, -14, 2122)})
-    tween:Play()
-    tween.Completed:Wait()
-    local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(53, -9, 2199)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(53, -2, 2199)})
-    tween:Play()
-    tween.Completed:Wait()
-    local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(120, 23, 2284)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(120, 23, 2284)})
-    tween:Play()
-    tween.Completed:Wait()
-    local tween = game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new((game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position-Vector3.new(78, 22, 2323)).magnitude/100,Enum.EasingStyle.Linear),{CFrame = CFrame.new(78, 22, 2323)})
-    tween:Play()
 end)
 
 FLYING = false
