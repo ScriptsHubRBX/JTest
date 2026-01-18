@@ -157,6 +157,11 @@ misc:Toggle("Delete Lasers",false,function(value)
 	onCharacterAdded(localPlayer.Character)
 end)
 
+_G.rocket = true
+misc:Toggle("Delete Turrets",true,function(value)
+	_G.rocket = value
+end)
+
 _G.Killed = true
 misc:Toggle("Killed NPC",true,function(value)
 	_G.Killed = value
@@ -581,6 +586,22 @@ end)
 local part = nil
 _G.collisionTable = {}
 while wait(1) do
+	if _G.rocket then
+        pcall(function()
+            if workspace.MilitaryBase.MilitaryTower.MachineGun.Top:FindFirstChild("Tip") then
+                workspace.MilitaryBase.MilitaryTower.MachineGun.Top.Tip:Destroy()
+            end
+            if workspace:FindFirstChild("CargoShip") then
+                if workspace.CargoShip.TurretBack.Arm:FindFirstChild("Tip") then
+                    workspace.CargoShip.TurretBack.Arm.Tip:Destroy()
+                end
+                if workspace.CargoShip.TurretFront.Arm:FindFirstChild("Tip") then
+                    workspace.CargoShip.TurretFront.Arm.Tip:Destroy()
+                end
+            end
+        end)
+    end
+
 	if _G.collision and game:GetService("Players").LocalPlayer.Character.Humanoid.Sit == true then
 		for _, vehicle in pairs(workspace.Vehicles:GetChildren()) do
 			if not vehicle:FindFirstChild("_VehicleState_"..game:GetService("Players").LocalPlayer.Name) then
