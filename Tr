@@ -3,82 +3,88 @@ for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
         v:Destroy()
     end
 end
+
 local UI = loadstring(game:HttpGetAsync("https://pastebin.com/raw/0589YkmB"))()
 local window = UI:Window("Premium")
 local nif = UI:Notification("Welcome to", game:GetService("Players").LocalPlayer.Name, "Okay!")
 local Trade = window:Tab("Trade")
 local Tradevalue = window:Tab("Trade Value")
+
+-- Добавление кнопок для игроков
 for i, v in game:GetService("Players"):GetChildren() do
-	Trade:Button(v.DisplayName,function()
-		game:GetService("ReplicatedStorage"):WaitForChild("TradeSendInitiation"):FireServer(unpack({[1] = v.UserId}))
-	end)
+    Trade:Button(v.DisplayName,function()
+        game:GetService("ReplicatedStorage"):WaitForChild("TradeSendInitiation"):FireServer(unpack({[1] = v.UserId}))
+    end)
 end
 
 game:GetService("Players").PlayerAdded:Connect(function(plr)
-	Trade:Button(plr.DisplayName,function()
-		game:GetService("ReplicatedStorage"):WaitForChild("TradeSendInitiation"):FireServer(unpack({[1] = plr.UserId}))
-	end)
+    Trade:Button(plr.DisplayName,function()
+        game:GetService("ReplicatedStorage"):WaitForChild("TradeSendInitiation"):FireServer(unpack({[1] = plr.UserId}))
+    end)
 end)
 
 game:GetService("Players").PlayerRemoving:Connect(function(plr)
-	for i, v in game:GetService("CoreGui").ui.Main.TabFolder:GetDescendants() do
-		if v:IsA("TextLabel") and v.Text == plr.DisplayName then
-       		v.Parent:Destroy()
-			break
-   		end
-	end
+    for i, v in game:GetService("CoreGui").ui.Main.TabFolder:GetDescendants() do
+        if v:IsA("TextLabel") and v.Text == plr.DisplayName then
+            v.Parent:Destroy()
+            break
+        end
+    end
 end)
+
+-- Функция для сокращения чисел
 local function Abbreviate(Number, Decimals)
-	return math.floor(((Number < 1 and Number) or math.floor(Number) / 10 ^ (math.log10(Number) - math.log10(Number) % 3)) * 10 ^ (Decimals or 3)) / 10 ^ (Decimals or 3)..(({"k", "M", "B", "T", "Qa", "Qn", "Sx", "Sp", "Oc", "No", "Dc", "Ud", "Dd", "Td", "QaD", "QnD", "SxD", "SpD", "OcD", "NoD", "Vg", "UvG", "DvG", "TvG", "QaVg", "QnVg", "SxVg", "SpVg", "OcVg", "NoVg"})[math.floor(math.log10(Number) / 3)] or "")
+    if Number < 1000 then
+        return tostring(Number)
+    end
+    return math.floor(((Number < 1 and Number) or math.floor(Number) / 10 ^ (math.log10(Number) - math.log10(Number) % 3)) * 10 ^ (Decimals or 3)) / 10 ^ (Decimals or 3)..(({"k", "M", "B", "T", "Qa", "Qn", "Sx", "Sp", "Oc", "No", "Dc", "Ud", "Dd", "Td", "QaD", "QnD", "SxD", "SpD", "OcD", "NoD", "Vg", "UvG", "DvG", "TvG", "QaVg", "QnVg", "SxVg", "SpVg", "OcVg", "NoVg"})[math.floor(math.log10(Number) / 3)] or "")
 end
+
+-- Таблица цен (исправленная структура)
 local values = {
-	cars = {
-    -- Уже добавленные:
-    ["Blue 5"] = 75000000,
-    ["Diamond 5"] = 70500000,
-    ["Pink 5"] = 65500000,
-    
-    -- Новые предметы:
+    ["HyperBlue Lvl5"] = 75000000,
+    ["HyperDiamond Lvl5"] = 70500000,
+    ["Pink Lvl5"] = 65500000,
     ["Javelin"] = 50000000,
     ["Torpedo"] = 49000000,
-    ["Purple 5"] = 48500000,
-    ["Red 5"] = 47500000,
+    ["Purple Lvl5"] = 48500000,
+    ["HyperRed Lvl5"] = 47500000,
     ["Void"] = 47500000,
     ["Checker"] = 42000000,
     ["Beignet"] = 40000000,
     ["Thrusters"] = 40000000,
-    ["Orange 5"] = 37500000,
+    ["HyperOrange Lvl5"] = 37500000,
     ["Celsior"] = 32000000,
     ["Vantablack"] = 32000000,
     ["Proto"] = 30500000,
     ["Laser Cannon"] = 28500000,
-    ["Green 5"] = 27000000,
+    ["HyperGreen Lvl5"] = 27000000,
     ["Power-1"] = 23000000,
-    ["Blue 4"] = 54000000,
-    ["Diamond 4"] = 45500000,
-    ["Purple 4"] = 32000000,
-    ["Red 4"] = 26000000,
-    ["Blue 3"] = 21500000,
+    ["HyperBlue Lvl4"] = 54000000,
+    ["HyperDiamond Lvl4"] = 45500000,
+    ["HyperPurple Lvl4"] = 32000000,
+    ["HyperRed Lvl4"] = 26000000,
+    ["HyperBlue Lvl3"] = 21500000,
     ["Arachnid"] = 21000000,
     ["Blue Fire"] = 20500000,
-    ["Yellow 5"] = 20000000,
+    ["HyperYellow Lvl5"] = 20000000,
     ["Drip"] = 20000000,
     ["Icebreaker"] = 20000000,
-    ["Orange 4"] = 20000000,
+    ["HyperOrange Lvl4"] = 20000000,
     ["Beam Hybrid"] = 19000000,
-    ["Green 4"] = 19000000,
+    ["HyperGreen Lvl4"] = 19000000,
     ["RTX"] = 18000000,
     ["Banana Car"] = 17000000,
-    ["Diamond 3"] = 17000000,
+    ["HyperDiamond Lvl3"] = 17000000,
     ["Spinner"] = 17000000,
     ["Noob Scream"] = 16000000,
     ["Molten M12"] = 15000000,
-    ["Yellow 4"] = 14000000,
+    ["Yellow Lvl4"] = 14000000,
     ["Crew Capsule"] = 12000000,
-    ["Pink 3"] = 12000000,
+    ["HyperPink Lvl3"] = 12000000,
     ["Raptor"] = 11000000,
     ["Blue 50"] = 10000000,
-    ["Purple 3"] = 10000000,
+    ["HyperPurple Lvl3"] = 10000000,
     ["Volt 4x4"] = 10000000,
     ["Gradient Pixel"] = 9500000,
     ["Snow Face"] = 9000000,
@@ -89,7 +95,7 @@ local values = {
     ["2 Billion"] = 7000000,
     ["Shogun"] = 6500000,
     ["Snowstorm"] = 6500000,
-    ["Red 3"] = 6000000,
+    ["HyperRed Lvl3"] = 6000000,
     ["Scorpion"] = 6000000,
     ["Bicycle Rack"] = 5500000,
     ["Carbonara"] = 5500000,
@@ -97,10 +103,10 @@ local values = {
     ["Bandit"] = 5000000,
     ["Goliath"] = 5000000,
     ["Snowflake"] = 5000000,
-    ["Blue 2"] = 4500000,
-    ["Green 3"] = 4500000,
+    ["HyperBlue Lvl2"] = 4500000,
+    ["HyperGreen Lvl3"] = 4500000,
     ["Ionize"] = 4500000,
-    ["Orange 3"] = 4500000,
+    ["Orange Lvl3"] = 4500000,
     ["Sci-fi Kitchen"] = 4500000,
     ["Galactic Carbon"] = 4000000,
     ["Icicle"] = 4000000,
@@ -110,7 +116,7 @@ local values = {
     ["Brickset"] = 3500000,
     ["Cash Spitter"] = 3500000,
     ["Clickbait"] = 3500000,
-    ["Diamond 2"] = 3500000,
+    ["HyperDiamond Lvl2"] = 3500000,
     ["Earthquake"] = 3500000,
     ["JB8"] = 3500000,
     ["Orion"] = 3500000,
@@ -119,7 +125,7 @@ local values = {
     ["Snake"] = 3500000,
     ["Tiki Torch"] = 3500000,
     ["Volt Wing"] = 3500000,
-    ["Yellow 3"] = 3500000,
+    ["HyperYellow Lvl3"] = 3500000,
     ["5 Star"] = 3000000,
     ["Airtail"] = 3000000,
     ["Black Widow"] = 3000000,
@@ -193,8 +199,8 @@ local values = {
     ["Missile Bed"] = 1500000,
     ["Orange Pixel"] = 1500000,
     ["Picnic Table"] = 1500000,
-    ["Pink 2"] = 1500000,
-    ["Red 2"] = 1500000,
+    ["Pink Lvl2"] = 1500000,
+    ["Red Lvl2"] = 1500000,
     ["Red Eyes"] = 1500000,
     ["Revox"] = 1500000,
     ["Shell Speaker"] = 1500000,
@@ -210,13 +216,13 @@ local values = {
     ["Flaming"] = 1250000,
     ["Frost Crawler"] = 1250000,
     ["Gold"] = 1250000,
-    ["Green 2"] = 1250000,
+    ["HyperGreen Lvl2"] = 1250000,
     ["Megaladon"] = 1250000,
     ["Nemesis"] = 1250000,
     ["Og Monster"] = 1250000,
-    ["Orange 2"] = 1250000,
+    ["HyperOrange Lvl2"] = 1250000,
     ["Pixel"] = 1250000,
-    ["Purple 2"] = 1250000,
+    ["HyperPurple Lvl2"] = 1250000,
     ["RGB Lights"] = 1250000,
     ["Soccer"] = 1250000,
     ["Star Badge"] = 1250000,
@@ -245,7 +251,7 @@ local values = {
     ["Ice Spike"] = 1000000,
     ["Japanese Lantern"] = 1000000,
     ["JDM"] = 1000000,
-    ["Jet Fighter"] = 1000000,
+    ["Jet"] = 1000000,
     ["Kanagawa"] = 1000000,
     ["Lightning"] = 1000000,
     ["Marshmallow"] = 1000000,
@@ -303,15 +309,15 @@ local values = {
     ["Baller"] = 500000,
     ["Bandana"] = 500000,
     ["Beadlock"] = 500000,
-    ["Blue 1"] = 500000,
+    ["HyperBlue Lvl1"] = 500000,
     ["Blue Pixel Racer"] = 500000,
     ["Compass"] = 500000,
     ["Deathtrap"] = 500000,
-    ["Diamond 1"] = 500000,
+    ["HyperDiamond Lvl1"] = 500000,
     ["Dino"] = 500000,
     ["Fall Chrome"] = 500000,
     ["Fiasco"] = 500000,
-    ["Green 1"] = 500000,
+    ["Green Lvl1"] = 500000,
     ["Gulf"] = 500000,
     ["Hummerhead"] = 500000,
     ["Hammlock"] = 500000,
@@ -327,13 +333,13 @@ local values = {
     ["Og Rocket Thrusters"] = 500000,
     ["Orge 2017"] = 500000,
     ["Overdrive"] = 500000,
-    ["Pink 1"] = 500000,
+    ["HyperPink Lvl1"] = 500000,
     ["Pixel Coin"] = 500000,
     ["Pizza Delivery"] = 500000,
-    ["Purple 1"] = 500000,
+    ["HyperPurple Lvl1"] = 500000,
     ["Radiant Orange"] = 500000,
     ["Rally Stoplight"] = 500000,
-    ["Red 1"] = 500000,
+    ["HyperRed Lvl1"] = 500000,
     ["Robowing"] = 500000,
     ["Roll-X"] = 500000,
     ["Sakura Tree"] = 500000,
@@ -347,10 +353,10 @@ local values = {
     ["Vintage Wings"] = 500000,
     ["Waving Flag"] = 500000,
     ["WYNDR"] = 500000,
-    ["Yellow 2"] = 500000,
+    ["Yellow Lvl2"] = 500000,
     ["Flamethrower"] = 300000,
     ["Forged"] = 300000,
-    ["Stunt Plane"] = 300000,
+    ["Stunt"] = 300000,
     ["XRK"] = 299000,
     ["5B Flags"] = 250000,
     ["6 Billion"] = 250000,
@@ -380,7 +386,7 @@ local values = {
     ["Magmatic Glow"] = 250000,
     ["Nascar 75th"] = 250000,
     ["Og Matador"] = 250000,
-    ["Orange 1"] = 250000,
+    ["HyperOrange Lvl1"] = 250000,
     ["Peppermint"] = 250000,
     ["Piggy"] = 250000,
     ["Posh"] = 250000,
@@ -422,7 +428,7 @@ local values = {
     ["Travel Case"] = 250000,
     ["Trion"] = 250000,
     ["Wooden Toy"] = 250000,
-    ["Yellow 1"] = 250000,
+    ["HyperYellow Lvl1"] = 250000,
     ["Desert Crawler"] = 229000,
     ["Stallion"] = 200000,
     ["Ray 9"] = 199000,
@@ -449,44 +455,67 @@ local values = {
     ["Semi Truck"] = 100000,
     ["Synth"] = 100000,
 }
-}
+
+-- Кнопка для расчета стоимости трейда
 Tradevalue:Button("Trade value [click]", function()
-	if game:GetService("Players").LocalPlayer.PlayerGui.AppUI:FindFirstChild("Trade") then
-		local player1 = 0
-		local player2 = 0
-		for i, v in game:GetService("Players").LocalPlayer.PlayerGui.AppUI.Trade.Offerings.Player1Offering.Cards:GetChildren() do
-			if v:FindFirstChild("Title") then
-				for i, f in values do
-					for g, l in f do
-						if v:FindFirstChild("Title").Text.Text == tostring(l[1]) then
-							player1 += l[2]
-						end
-					end
-				end
-			end
-		end
-		for i, v in game:GetService("Players").LocalPlayer.PlayerGui.AppUI.Trade.Offerings.Player2Offering.Cards:GetChildren() do
-			if v:FindFirstChild("Title") then
-				for i, f in values do
-					for g, l in f do
-						if v:FindFirstChild("Title").Text.Text == tostring(l[1]) then
-							player2 += l[2]
-						end
-					end
-				end
-			end
-		end
-		local text = nil
-		for i, v in game:GetService("CoreGui").ui.Main.TabFolder:GetChildren() do
-			if #v:GetChildren() <= 2 then
-				text = v.Button.ButtonTitle
-			end
-		end
-		local val = Abbreviate(math.abs(player2 - player1),1)
-		if player1 >= player2 then
-			text.Text = "You lose in: "..val
-		elseif player1 < player2 then
-			text.Text = "You win in: "..val
-		end
-	end
+    if game:GetService("Players").LocalPlayer.PlayerGui.AppUI:FindFirstChild("Trade") then
+        local player1 = 0
+        local player2 = 0
+        
+        -- Расчет стоимости предметов player1
+        for i, v in game:GetService("Players").LocalPlayer.PlayerGui.AppUI.Trade.Offerings.Player1Offering.Cards:GetChildren() do
+            if v:FindFirstChild("Title") then
+                local itemName = v:FindFirstChild("Title").Text.Text
+                if values[itemName] then
+                    player1 = player1 + values[itemName]
+                else
+                    print("Неизвестный предмет:", itemName)
+                end
+            end
+        end
+        
+        -- Расчет стоимости предметов player2
+        for i, v in game:GetService("Players").LocalPlayer.PlayerGui.AppUI.Trade.Offerings.Player2Offering.Cards:GetChildren() do
+            if v:FindFirstChild("Title") then
+                local itemName = v:FindFirstChild("Title").Text.Text
+                if values[itemName] then
+                    player2 = player2 + values[itemName]
+                else
+                    print("Неизвестный предмет:", itemName)
+                end
+            end
+        end
+        
+        -- Поиск текстового элемента для вывода результата
+        local textElement = nil
+        for i, v in game:GetService("CoreGui").ui.Main.TabFolder:GetChildren() do
+            if #v:GetChildren() <= 2 then
+                local button = v:FindFirstChild("Button")
+                if button then
+                    local title = button:FindFirstChild("ButtonTitle")
+                    if title then
+                        textElement = title
+                        break
+                    end
+                end
+            end
+        end
+        
+        if textElement then
+            local difference = player1 - player2
+            local val = Abbreviate(math.abs(difference),3)
+            
+            if player1 > player2 then
+                textElement.Text = "You lose by: " .. val
+            elseif player1 < player2 then
+                textElement.Text = "You win by: " .. val
+            else
+                textElement.Text = "Balance"
+            end
+        else
+            print("Не найден элемент для отображения результата")
+        end
+    else
+        print("Окно трейда не открыто")
+    end
 end)
