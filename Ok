@@ -64,8 +64,8 @@ player:Toggle("Inf Jump",false,function(value)
 	end
 end)
 
-_G.Noclip = true
-player:Toggle("Noclip", true, function(value)
+_G.Noclip = false
+player:Toggle("Noclip", false, function(value)
 	_G.Noclip = value
 end)
 
