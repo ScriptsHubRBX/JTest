@@ -64,6 +64,11 @@ player:Toggle("Inf Jump",false,function(value)
 	end
 end)
 
+_G.Noclip = true
+player:Toggle("Noclip", true, function(value)
+	_G.Noclip = value
+end)
+
 misc:Button("Delete Doors",function(value)
 	spawn(function()
 		for i, v in workspace:GetChildren() do
@@ -77,7 +82,16 @@ misc:Button("Delete Doors",function(value)
 			end
 		end
 	end)
-	
+	pcall(function()
+	    for i, v in workspace.Banks.Bank.Decorative.Interior:GetChildren() do
+	        if v.Name == "BankTeller" or v.Name == "Details" then
+	            for i, f in v:GetChildren() do
+	                f.Transparency = .5
+	                f.CanCollide = false
+	            end
+	        end
+	    end
+	end)
 	spawn(function()
 		for i, f in game:GetService("Workspace").Jewelrys.Jewelry.Doors:GetDescendants() do
 			if f:IsA("Part") or f:IsA("MeshPart") then
@@ -523,13 +537,20 @@ UserInputService.InputEnded:Connect(function(key,event)
 		_G.turnspeed = 0
 	end
 end)
+workspace.Darts.ChildAdded:Connect(function(child)
+	if _G.Lasers then
+        child:Destroy()
+    end
+end)
 dir = 0
 RunService.RenderStepped:Connect(function()
-	if _G.Lasers then
-        for i, v in workspace.Darts:GetChildren() do
-            v:Destroy()
+		if _G.Noclip then
+            for i, v in game.Players.LocalPlayer.Character:GetChildren() do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
         end
-    end
 
 	if _G.carfly then
 		if game:GetService("Players").LocalPlayer.Character.Humanoid.Sit == true and FLYING == false then
