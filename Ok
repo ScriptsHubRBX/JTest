@@ -545,7 +545,7 @@ end)
 dir = 0
 RunService.RenderStepped:Connect(function()
 		if _G.Noclip then
-            for i, v in game.Players.LocalPlayer.Character:GetChildren() do
+            for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
                 if v:IsA("BasePart") then
                     v.CanCollide = false
                 end
