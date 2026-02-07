@@ -1,7 +1,8 @@
 loadstring(game:HttpGet("https://pastebin.com/raw/CLNv5GXH"))()
-if game:GetService("Players").LocalPlayer.Name ~= "akeelapro231" and game:GetService("Players").LocalPlayer.Name ~= "kipr987" and game:GetService("Players").LocalPlayer.Name ~= "vusix" and game:GetService("Players").LocalPlayer.Name ~= "Milatakun532" then
 	print(game:GetService("Players").LocalPlayer.Name)
+if game:GetService("Players").LocalPlayer.Name ~= "akeelapro231" and game:GetService("Players").LocalPlayer.Name ~= "kipr987" and game:GetService("Players").LocalPlayer.Name ~= "vusix" and game:GetService("Players").LocalPlayer.Name ~= "Milatakun532" then
 	game:GetService("Players").LocalPlayer:Kick("The script has been updated to V2.0. Please visit the Discord server to obtain the script.")
+	return
 end
 
 if game.PlaceId == 606849621 then
