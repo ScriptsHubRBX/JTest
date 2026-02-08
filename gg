@@ -26,7 +26,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/ScriptsHubRBX/JTest/r
 elseif game.PlaceId == 109652885385286 then
 loadstring(game:HttpGet("https://pastebin.com/raw/esgw1z6F"))()
 elseif game.PlaceId == 192800 then
-loadstring(game:HttpGet("https://pastebin.com/raw/yn0T6pdm"))()
+loadstring(game:HttpGet("https://github.com/ScriptsHubRBX/JTest/raw/refs/heads/main/PP"))()
 elseif game.PlaceId == 11156779721 then
 loadstring(game:HttpGet("https://pastebin.com/raw/XqZiC8pT"))()
 else
