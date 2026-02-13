@@ -149,6 +149,7 @@ local function Give()
             wait(0.1)  -- Small delay to pick up
         end
     end
+	wait(2)
     goHome()
 end
 
