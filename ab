@@ -1,0 +1,198 @@
+for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+	if v.Name == "ui" then
+		v:Destroy()
+	end
+end
+local UI = loadstring(game:HttpGetAsync("https://pastebin.com/raw/0589YkmB"))()
+
+local fasttp = {
+	[1] = Vector3.new(-17, 4885, 43),
+	[2] = Vector3.new(-1818, 4407, 178),
+	[3] = Vector3.new(1613, 4031, -1873),
+}
+
+local window = UI:Window("Premium")
+local nif = UI:Notification("Welcome to", game:GetService("Players").LocalPlayer.Name, "Okay!")
+local main = window:Tab("Main")
+local tubes = window:Tab("Tube Speed")
+local player = window:Tab("Player")
+local tp = window:Tab("Teleport")
+
+_G.o = 10
+_G.eo = false
+main:Toggle("Oxygen Small",false,function(value)
+	_G.eo = value
+end)
+
+main:Slider("Oxygen",0,100,10,function(value)
+	_G.o = value
+end)
+_G.tween = 50
+main:Slider("Tween",0,200,150,function(value)
+	_G.tween = value
+end)
+
+game.Players.LocalPlayer:GetAttributeChangedSignal("oxygen"):Connect(function()
+	if _G.eo and game.Players.LocalPlayer:GetAttribute("oxygen") <= _G.o then
+
+		local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+local closestPoint = nil
+local closestDistance = math.huge
+
+for i, point in pairs(fasttp) do
+    local distance = (playerPos - point).magnitude
+    if distance < closestDistance then
+        closestDistance = distance
+        closestPoint = point
+    end
+end
+
+local targetPosition = closestPoint
+local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+local tweenTime = closestDistance / _G.tween
+
+game:GetService("TweenService"):Create(
+    rootPart,
+    TweenInfo.new(tweenTime, Enum.EasingStyle.Linear),
+    {CFrame = CFrame.new(closestPoint)}
+):Play()
+
+	end
+end)
+
+
+_G.speedOn = true
+player:Toggle("Speed On/Off",true,function(value)
+	_G.speedOn = value
+end)
+
+_G.speed = 24
+player:Slider("Speed",0,100,24,function(value)
+	_G.speed = value
+end)
+
+_G.Noclip = false
+player:Toggle("Noclip", false, function(value)
+	_G.Noclip = value
+end)
+
+local infJump
+infJumpDebounce = false
+player:Toggle("Inf Jump",false,function(value)
+	if value == true then
+		infJump = game:GetService("UserInputService").JumpRequest:Connect(function()
+	    	if not infJumpDebounce then
+	        infJumpDebounce = true
+	        game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+	        wait()
+	        infJumpDebounce = false
+	    	end
+		end)
+	else
+		infJump:Disconnect()
+	end
+end)
+
+_G.heli = false
+tubes:Toggle("Tube Speed",false,function(value)
+	_G.heli = value
+end)
+_G.helispeed = 10
+tubes:Slider("Speed",0,500,100,function(value)
+	_G.helispeed = value
+end)
+
+tp:Button("Spawn",function()
+	local targetPosition = Vector3.new(-17, 4885, 43)
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local rootPart = character:WaitForChild("HumanoidRootPart")
+local distance = (targetPosition - rootPart.Position).Magnitude
+local tweenTime = distance / _G.tween
+
+game:GetService("TweenService"):Create(
+    rootPart,
+    TweenInfo.new(tweenTime, Enum.EasingStyle.Linear),
+    {CFrame = CFrame.new(targetPosition)}
+):Play()
+end) 
+
+tp:Button("Location 1",function()
+		local targetPosition = Vector3.new(-1818, 4407, 178)
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local rootPart = character:WaitForChild("HumanoidRootPart")
+local distance = (targetPosition - rootPart.Position).Magnitude
+local tweenTime = distance / _G.tween
+
+game:GetService("TweenService"):Create(
+    rootPart,
+    TweenInfo.new(tweenTime, Enum.EasingStyle.Linear),
+    {CFrame = CFrame.new(targetPosition)}
+):Play()
+end) 
+
+tp:Button("Location 2",function()
+		local targetPosition = Vector3.new(1613, 4031, -1873)
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local rootPart = character:WaitForChild("HumanoidRootPart")
+local distance = (targetPosition - rootPart.Position).Magnitude
+local tweenTime = distance / _G.tween
+
+game:GetService("TweenService"):Create(
+    rootPart,
+    TweenInfo.new(tweenTime, Enum.EasingStyle.Linear),
+    {CFrame = CFrame.new(targetPosition)}
+):Play()
+end) 
+
+local value = 0
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+UserInputService.InputBegan:Connect(function(key, event)
+    if event then return end
+    
+    if key.KeyCode == Enum.KeyCode.W then
+        value = 1
+    elseif key.KeyCode == Enum.KeyCode.S then
+        value = -1
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(key, event)
+    if event then return end
+    
+    if key.KeyCode == Enum.KeyCode.W or key.KeyCode == Enum.KeyCode.S then
+        value = 0
+    end
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+		if _G.Noclip then
+            for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
+        end
+	pcall(function()
+		if _G.speedOn then
+			game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = _G.speed
+		end
+	end)
+	if _G.heli and workspace.Game.Tubes:FindFirstChild(game.Players.LocalPlayer.Name) then
+        local tube = workspace.Game.Tubes[game.Players.LocalPlayer.Name]
+        local rootPart = tube.RootPart
+        local moveVector = rootPart.CFrame.LookVector * value * _G.helispeed
+		workspace.Game.Tubes[game.Players.LocalPlayer.Name].RootPart.TubeLinearVelocity.MaxPlanarAxesForce = Vector2.new(math.huge,math.huge)
+        workspace.Game.Tubes[game.Players.LocalPlayer.Name].RootPart.TubeLinearVelocity.VectorVelocity = Vector3.new(
+            moveVector.X,
+            moveVector.Y,
+            moveVector.Z
+        )
+    end
+end)
