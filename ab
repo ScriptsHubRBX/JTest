@@ -18,16 +18,16 @@ local tubes = window:Tab("Tube Speed")
 local player = window:Tab("Player")
 local tp = window:Tab("Teleport")
 
-_G.o = 10
-_G.eo = false
+_G.o = 20
+_G.eo = true
 main:Toggle("Oxygen Small",false,function(value)
 	_G.eo = value
 end)
 
-main:Slider("Oxygen",0,100,10,function(value)
+main:Slider("Oxygen",0,100,20,function(value)
 	_G.o = value
 end)
-_G.tween = 50
+_G.tween = 150
 main:Slider("Tween",0,200,150,function(value)
 	_G.tween = value
 end)
@@ -95,11 +95,11 @@ player:Toggle("Inf Jump",false,function(value)
 	end
 end)
 
-_G.heli = false
+_G.heli = true
 tubes:Toggle("Tube Speed",false,function(value)
 	_G.heli = value
 end)
-_G.helispeed = 10
+_G.helispeed = 200
 tubes:Slider("Speed",0,500,100,function(value)
 	_G.helispeed = value
 end)
@@ -149,25 +149,30 @@ game:GetService("TweenService"):Create(
 ):Play()
 end) 
 
-local value = 0
+local horizontalValue = 0
+local verticalValue = 0
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 UserInputService.InputBegan:Connect(function(key, event)
     if event then return end
-    
     if key.KeyCode == Enum.KeyCode.W then
-        value = 1
+        horizontalValue = 1
     elseif key.KeyCode == Enum.KeyCode.S then
-        value = -1
+        horizontalValue = -1
+    elseif key.KeyCode == Enum.KeyCode.E then
+        verticalValue = 1
+    elseif key.KeyCode == Enum.KeyCode.Q then
+        verticalValue = -1 
     end
 end)
 
 UserInputService.InputEnded:Connect(function(key, event)
     if event then return end
-    
     if key.KeyCode == Enum.KeyCode.W or key.KeyCode == Enum.KeyCode.S then
-        value = 0
+        horizontalValue = 0
+    elseif key.KeyCode == Enum.KeyCode.E or key.KeyCode == Enum.KeyCode.Q then
+        verticalValue = 0
     end
 end)
 
@@ -187,12 +192,15 @@ game:GetService("RunService").RenderStepped:Connect(function()
 	if _G.heli and workspace.Game.Tubes:FindFirstChild(game.Players.LocalPlayer.Name) then
         local tube = workspace.Game.Tubes[game.Players.LocalPlayer.Name]
         local rootPart = tube.RootPart
-        local moveVector = rootPart.CFrame.LookVector * value * _G.helispeed
-		workspace.Game.Tubes[game.Players.LocalPlayer.Name].RootPart.TubeLinearVelocity.MaxPlanarAxesForce = Vector2.new(math.huge,math.huge)
-        workspace.Game.Tubes[game.Players.LocalPlayer.Name].RootPart.TubeLinearVelocity.VectorVelocity = Vector3.new(
-            moveVector.X,
-            moveVector.Y,
-            moveVector.Z
+        local linearVel = rootPart.TubeLinearVelocity
+        linearVel.MaxForce = math.huge
+        local horizontalMove = rootPart.CFrame.LookVector * horizontalValue * _G.helispeed
+        local verticalMove = Vector3.new(0, verticalValue * _G.helispeed, 0)
+        local totalVelocity = Vector3.new(
+            horizontalMove.X,
+            verticalMove.Y,
+            horizontalMove.Z
         )
+        linearVel.VectorVelocity = totalVelocity
     end
 end)
