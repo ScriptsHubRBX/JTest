@@ -3,6 +3,8 @@ for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
 		v:Destroy()
 	end
 end
+local sound = Instance.new("Sound",workspace)
+sound.SoundId = "rbxassetid://17426289085"
 local UI = loadstring(game:HttpGetAsync("https://pastebin.com/raw/0589YkmB"))()
 
 local fasttp = {
@@ -16,19 +18,20 @@ local nif = UI:Notification("Welcome to", game:GetService("Players").LocalPlayer
 local main = window:Tab("Main")
 local tubes = window:Tab("Tube Speed")
 local player = window:Tab("Player")
+local fish = window:Tab("Fish")
 local tp = window:Tab("Teleport")
 
-_G.o = 20
+_G.o = 40
 _G.eo = true
-main:Toggle("Oxygen Small",false,function(value)
+main:Toggle("Oxygen Small",true,function(value)
 	_G.eo = value
 end)
 
-main:Slider("Oxygen",0,100,20,function(value)
+main:Slider("Oxygen",0,100,40,function(value)
 	_G.o = value
 end)
-_G.tween = 150
-main:Slider("Tween",0,200,150,function(value)
+_G.tween = 200
+main:Slider("Tween",0,200,200,function(value)
 	_G.tween = value
 end)
 
@@ -68,8 +71,8 @@ player:Toggle("Speed On/Off",true,function(value)
 	_G.speedOn = value
 end)
 
-_G.speed = 24
-player:Slider("Speed",0,100,24,function(value)
+_G.speed = 50
+player:Slider("Speed",0,100,50,function(value)
 	_G.speed = value
 end)
 
@@ -96,11 +99,11 @@ player:Toggle("Inf Jump",false,function(value)
 end)
 
 _G.heli = true
-tubes:Toggle("Tube Speed",false,function(value)
+tubes:Toggle("Tube Speed",true,function(value)
 	_G.heli = value
 end)
 _G.helispeed = 200
-tubes:Slider("Speed",0,500,100,function(value)
+tubes:Slider("Speed",0,500,200,function(value)
 	_G.helispeed = value
 end)
 
@@ -148,6 +151,26 @@ game:GetService("TweenService"):Create(
     {CFrame = CFrame.new(targetPosition)}
 ):Play()
 end) 
+
+_G.fish = nil
+fish:Textbox("Fish","Enter",function(value)
+	for i, v in workspace.Game.Fish.client:GetChildren() do
+		if v:FindFirstChild("Highlight") then
+			v:FindFirstChild("Highlight"):Destroy()
+		end
+	end
+	_G.fish = value
+end)
+
+_G.mutation = false
+fish:Textbox("Mutation","Enter",function(value)
+	for i, v in workspace.Game.Fish.client:GetChildren() do
+		if v:FindFirstChild("Highlight") then
+			v:FindFirstChild("Highlight"):Destroy()
+		end
+	end
+	_G.mutation = value
+end)
 
 local horizontalValue = 0
 local verticalValue = 0
@@ -204,3 +227,51 @@ game:GetService("RunService").RenderStepped:Connect(function()
         linearVel.VectorVelocity = totalVelocity
     end
 end)
+
+while wait() do
+	for i, v in workspace.Game.Fish.client:GetChildren() do
+		if v:FindFirstChild("Head") and v.Head.stats.Fish.Text == _G.fish and not v:FindFirstChild("Highlight") and _G.fish ~= nil then
+			local h = Instance.new("Highlight",v)
+			sound:Play()
+			for i,f in v:GetChildren() do
+				if f:IsA("MeshPart") then
+					f.Transparency = 0
+				end
+			end
+		end
+		if v:FindFirstChild("RootPart") and v:FindFirstChild("RootPart"):FindFirstChild("stats") and _G.fish ~= nil then
+			if v:FindFirstChild("RootPart"):FindFirstChild("stats").Fish.Text == _G.fish and not v:FindFirstChild("Highlight") then
+				local h = Instance.new("Highlight",v)
+				sound:Play()
+				for i,f in v:GetChildren() do
+					if f:IsA("MeshPart") then
+						f.Transparency = 0
+					end
+				end
+			end
+		end
+	end
+
+	for i, v in workspace.Game.Fish.client:GetChildren() do
+			if v:FindFirstChild("Head") and v.Head.stats.Mutation.Label.Text == _G.mutation and not v:FindFirstChild("Highlight") and _G.mutation ~= nil then
+				local h = Instance.new("Highlight",v)
+				sound:Play()
+				for i,f in v:GetChildren() do
+					if f:IsA("MeshPart") then
+						f.Transparency = 0
+					end
+				end
+			end
+			if v:FindFirstChild("RootPart") and v:FindFirstChild("RootPart"):FindFirstChild("stats") and _G.mutation ~= nil then
+				if v:FindFirstChild("RootPart"):FindFirstChild("stats").Mutation.Label.Text == _G.mutation and not v:FindFirstChild("Highlight") then
+					local h = Instance.new("Highlight",v)
+					sound:Play()
+					for i,f in v:GetChildren() do
+						if f:IsA("MeshPart") then
+							f.Transparency = 0
+						end
+					end
+				end
+			end
+		end
+end
