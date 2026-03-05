@@ -539,7 +539,7 @@ UserInputService.InputEnded:Connect(function(key,event)
 end)
 workspace.Darts.ChildAdded:Connect(function(child)
 	if _G.Lasers then
-        child:Destroy()
+        --child:Destroy()
     end
 end)
 dir = 0
