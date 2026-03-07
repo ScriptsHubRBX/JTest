@@ -452,6 +452,8 @@ function head()
 		if _G.ceohead then
 			if workspace.MansionRobbery:FindFirstChild("ActiveBoss") then
 				workspace.MansionRobbery:FindFirstChild("ActiveBoss").Head.Size = Vector3.new(7,7,7)
+				workspace.MansionRobbery.ActiveBoss.NPCLookAtObj.Value = workspace.MansionRobbery.ActiveBoss.HumanoidRootPart
+				workspace.MansionRobbery.ActiveBoss.NPCDestObj.Value = workspace.MansionRobbery.ActiveBoss.HumanoidRootPart
 			end
 		end 
 	end
