@@ -377,6 +377,11 @@ function rocket()
 					workspace.CargoShip.TurretFront.Arm.Tip:Destroy()
 				end
 			end
+			for i, v in workspace.OilRig.Turrets:GetChildren() do
+				if v:FindFirstChild("Arm") and v:FindFirstChild("Arm"):FindFirstChild("Tip") then
+					v:FindFirstChild("Arm"):FindFirstChild("Tip"):Destroy()
+				end
+			end
 			if workspace.MilitaryBase.MilitaryTower.MachineGun.Top:FindFirstChild("Tip") then
 				workspace.MilitaryBase.MilitaryTower.MachineGun.Top.Tip:Destroy()
 			end
