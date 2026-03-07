@@ -964,7 +964,8 @@ spawn(function()
 	killed()
 end)
 spawn(function()
-	print(1)
+	wait(3)
+	hitbox()
 end)
 spawn(function()
 	code()
@@ -986,24 +987,10 @@ while wait(1) do
 			for i, v in game:GetService("Players"):GetChildren() do
 				if f:IsA("Frame") and v.DisplayName == f.NameText.Text then
 					if v.Character:FindFirstChild("BillboardGui") then
+						v.Character.BillboardGui.Bounty.Text = ""
 						v.Character.BillboardGui.Bounty.Text = f.BountyText.Text
 						table.insert(tab,f.NameText.Text)
 					end
-				end
-			end
-		end
-
-		for i, v in game:GetService("Players"):GetChildren() do
-			local is = false
-			for i, f in tab do
-				if v.DisplayName == f then
-					is = true
-					break
-				end
-			end
-			if is == false then
-				if v.Character:FindFirstChild("BillboardGui") then
-					v.Character.BillboardGui.Bounty.Text = ""
 				end
 			end
 		end
