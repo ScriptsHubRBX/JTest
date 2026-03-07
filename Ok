@@ -206,11 +206,25 @@ player:Toggle("Inf Jump",false,function(value)
 end)
 
 function noclip()
-	for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
-		if v:IsA("BasePart") then
-			v.CanCollide = not _G.Noclip
-		end
-	end
+local run = nil
+	run = game:GetService("RunService").RenderStepped:Connect(function()
+		pcall(function()
+			if _G.Noclip then
+				for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
+					if v:IsA("BasePart") then
+						v.CanCollide = false
+					end
+				end
+			else
+				for i, v in game:GetService("Players").LocalPlayer.Character:GetChildren() do
+					if v:IsA("BasePart") then
+						v.CanCollide = true
+					end
+				end
+				run:Disconnect()
+			end
+		end)
+	end)
 end
 
 _G.Noclip = false
