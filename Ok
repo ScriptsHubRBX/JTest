@@ -996,14 +996,16 @@ end)
 
 while wait(1) do
 	pcall(function()
-		local tab = {}
+		for i, v in game:GetService("Players"):GetChildren() do
+			if v.Character:FindFirstChild("BillboardGui") then
+				v.Character.BillboardGui.Bounty.Text = ""
+			end
+		end
 		for i,f in game:GetService("Workspace").BountyBoard.Board.MostWanted.Board:GetChildren() do
 			for i, v in game:GetService("Players"):GetChildren() do
 				if f:IsA("Frame") and v.DisplayName == f.NameText.Text then
 					if v.Character:FindFirstChild("BillboardGui") then
-						v.Character.BillboardGui.Bounty.Text = ""
 						v.Character.BillboardGui.Bounty.Text = f.BountyText.Text
-						table.insert(tab,f.NameText.Text)
 					end
 				end
 			end
