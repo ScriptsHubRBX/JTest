@@ -16,6 +16,7 @@ local misc = window:Tab("Misc")
 local miscsup = window:Tab("Misc (Support)")
 local car = window:Tab("Car")
 local robbers = window:Tab("Robbers")
+local teleport = window:Tab("Teleport")
 
 local Camera = workspace.CurrentCamera
 local Players = game:GetService("Players")
@@ -347,6 +348,7 @@ function onCharacterAdded(character)
 						v:Destroy()
 					end
 				end
+				workspace.MilitaryBase.Forcefield:Destroy()
 			end)
 		else
 			run:Disconnect()
@@ -434,7 +436,7 @@ end)
 function hitbox()
 	while wait(1) and _G.Hitbox do
 		for i, v in game:GetService("Players"):GetChildren() do
-			if v.Character and v.Name ~= game:GetService("Players").LocalPlayer.Name and v.Team ~= game:GetService("Players").LocalPlayer.Team and _G.Hitbox then
+			if v.Character and v.Name ~= game:GetService("Players").LocalPlayer.Name and v.Team ~= game:GetService("Players").LocalPlayer.Team then
 				if v.Character:FindFirstChild("HumanoidRootPart") then
 					if _G.trans then
 						v.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
@@ -450,9 +452,18 @@ function hitbox()
 				end
 			end
 		end
+		for i, v in game:GetService("Players"):GetChildren() do
+			if _G.Hitbox == false or v.Team == game:GetService("Players").LocalPlayer.Team then
+				if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+					v.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
+					v.Character:FindFirstChild("HumanoidRootPart").CanCollide = true
+					v.Character:FindFirstChild("HumanoidRootPart").Size = Vector3.new(1.8, 2.1, 0.95)
+				end
+			end
+		end
 	end
 	for i, v in game:GetService("Players"):GetChildren() do
-		if _G.Hitbox == false or v.Team == game:GetService("Players").LocalPlayer.Team then
+		if _G.Hitbox == false then
 			if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
 				v.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
 				v.Character:FindFirstChild("HumanoidRootPart").CanCollide = true
@@ -999,6 +1010,105 @@ spawn(function()
 end)
 spawn(function()
 	plane()
+end)
+
+local speed = 350
+local tp = false
+
+local function checkAboveHead()
+    local player = game:GetService("Players").LocalPlayer
+    local character = player.Character
+    if not character then return nil end
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil end
+    local startPos = hrp.Position + Vector3.new(0, 5, 0)
+    local direction = Vector3.new(0, 999, 0)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {character}
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    local result = workspace:Raycast(startPos, direction, raycastParams)
+    if result then
+        return result
+    else
+        return nil
+    end
+end
+
+function tp(pos)
+    local player = game:GetService("Players").LocalPlayer
+    local character = player.Character
+	if not character:GetAttribute("InVehicle") then return end
+	if checkAboveHead == nil then return end
+    local hrp = character:WaitForChild("HumanoidRootPart")
+	if tpf then return end
+	tpf = true
+    
+    local bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bv.Velocity = Vector3.zero
+    bv.Parent = hrp
+    
+    local function moveTo(targetPos, moveSpeed)
+        local distance = (targetPos - hrp.Position).Magnitude
+        local direction = (targetPos - hrp.Position).Unit
+        local travelTime = distance / moveSpeed
+        
+        bv.Velocity = direction * moveSpeed
+		repeat wait() print((targetPos - hrp.Position).magnitude) until (targetPos - hrp.Position).magnitude <= 30
+        --task.wait(travelTime)
+        bv.Velocity = Vector3.zero
+    end
+    
+    local startPos = Vector3.new(hrp.Position.X, 500, hrp.Position.Z)
+	local oldspeed = speed
+	speed = 450
+    moveTo(startPos, speed)
+    
+    local endPos = Vector3.new(pos.X, 500, pos.Z)
+	speed = oldspeed
+    moveTo(endPos, speed)
+    
+    local finalPos = Vector3.new(pos.X, pos.Y, pos.Z)
+	speed = 450
+    moveTo(finalPos, speed)
+	speed = oldspeed
+    wait(.2)
+    bv:Destroy()
+	tpf = false
+end
+
+local list = {
+["Power Plant"] = Vector3.new(83, 21, 2342),
+["Plane"] = Vector3.new(-1244, 42, 2870),
+["Rising Base"] = Vector3.new(-309, 18, 1598),
+["Jewelery"] = Vector3.new(77, 18, 1311),
+["Museum"] = Vector3.new(1103, 140, 1323),
+["Rising Bank"] = Vector3.new(21, 18, 770),
+["Tomb"] = Vector3.new(482, 21, -479),
+["Volcano"] = Vector3.new(2279, 19, -2064),
+["Casino"] = Vector3.new(-211, 20, -4600),
+["Create Bank"] = Vector3.new(-648, 20, -6088),
+["Oil Rig"] = Vector3.new(-2866, 135, -4003),
+["Ceo"] = Vector3.new(3048, 58, -4533),
+}
+
+local t = {
+	[1] = "Power Plant",
+	[2] = "Plane",
+	[3] = "Rising Bank",
+	[4] = "Jewelery",
+	[5] = "Rising Base",
+	[6] = "Museum",
+	[7] = "Tomb",
+	[8] = "Volcano",
+	[9] = "Casino",
+	[10] = "Create Bank",
+	[11] = "Oil Rig",
+	[12] = "Ceo",
+}
+
+teleport:Dropdown("Teleport",t,function(value)
+	tp(list[value])
 end)
 
 while wait(1) do
