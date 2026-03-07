@@ -246,15 +246,17 @@ misc:Button("Delete Doors",function(value)
 			end
 		end
 	end)
-	pcall(function()
-		for i, v in workspace.Banks.Bank.Decorative.Interior:GetChildren() do
-			if v.Name == "BankTeller" or v.Name == "Details" then
-				for i, f in v:GetChildren() do
-					f.Transparency = .5
+	spawn(function()
+		for i, v in workspace.RobberyTomb.Gates:GetChildren() do
+			if v:IsA("Model") then
+				for i, f in v.InnerModel:GetChildren() do
 					f.CanCollide = false
+					f.Transparency = 1
 				end
 			end
 		end
+		workspace.RobberyTomb.Tomb.ExitDoor.InnerModel.Base.CanCollide = false
+		workspace.RobberyTomb.Tomb.ExitDoor.InnerModel.Base.Transparency = 1
 	end)
 	spawn(function()
 		for i, f in game:GetService("Workspace").Jewelrys.Jewelry.Doors:GetDescendants() do
@@ -619,7 +621,7 @@ misc:Toggle("Casino Code",true,function(value)
 	code()
 end)
 _G.trans = false
-misc:Toggle("HitBox Trnasparency",false,function(value)
+misc:Toggle("HitBox Transparency",false,function(value)
 	_G.trans = value
 end)
 
