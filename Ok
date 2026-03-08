@@ -1016,106 +1016,191 @@ local speed = 350
 local tpf = false
 
 local function checkAboveHead(checkPos, ignoreList)
-	local startPos = checkPos + Vector3.new(0, 5, 0)
-	local direction = Vector3.new(0, 300, 0)
-	local raycastParams = RaycastParams.new()
-	raycastParams.FilterDescendantsInstances = ignoreList or {}
-	raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-	return workspace:Raycast(startPos, direction, raycastParams)
+    local startPos = checkPos + Vector3.new(0, 5, 0)
+    local direction = Vector3.new(0, 300, 0)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = ignoreList or {}
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    return workspace:Raycast(startPos, direction, raycastParams)
 end
 
-function tp(pos)
-	local player = game:GetService("Players").LocalPlayer
-	local character = player.Character
-	if not character then return end
+local function getPosition(target)
+    if typeof(target) == "Vector3" then
+        return target
+    elseif typeof(target) == "Instance" then
+        if target:IsA("Model") then
+            local primary = target:FindFirstChild("HumanoidRootPart") or target:FindFirstChild("PrimaryPart") or target:FindFirstChildWhichIsA("BasePart")
+            if primary then
+                return primary.Position
+            end
+        elseif target:IsA("BasePart") then
+            return target.Position
+        end
+    end
+    return nil
+end
 
-	local hrp = character:WaitForChild("HumanoidRootPart")
-	if checkAboveHead(hrp.Position, {character}) then return end
-	if tpf then return end
+function tp(target)
+    local player = game:GetService("Players").LocalPlayer
+    local character = player.Character
+    if not character then return end
 
-	tpf = true
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    if checkAboveHead(hrp.Position, {character}) then return end
+    if tpf then return end
 
-	local bv = Instance.new("BodyVelocity")
-	bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	bv.Velocity = Vector3.zero
-	bv.Parent = hrp
+    tpf = true
 
-	local function moveTo(targetPos, moveSpeed)
-		local direction = (targetPos - hrp.Position).Unit
-		bv.Velocity = direction * moveSpeed
-		repeat 
-			task.wait() 
-		until (targetPos - hrp.Position).Magnitude <= 25
-		bv.Velocity = Vector3.zero
-	end
+    local bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bv.Velocity = Vector3.zero
+    bv.Parent = hrp
 
-	local function getVehicle()
-		if character:GetAttribute("InVehicle") then return nil end
+    local function moveTo(targetPos, moveSpeed)
+        local direction = (targetPos - hrp.Position).Unit
+        bv.Velocity = direction * moveSpeed
+        repeat 
+            task.wait() 
+        until (targetPos - hrp.Position).Magnitude <= 25
+        bv.Velocity = Vector3.zero
+    end
 
-		local vehicles = {}
-		for _, v in workspace.Vehicles:GetChildren() do
-			if v.Name == "Camaro" and v:FindFirstChild("Seat") then
-				local seatPos = v.Seat.Position
-				if not checkAboveHead(seatPos, {character, v}) then
-					table.insert(vehicles, {
-						vehicle = v,
-						dist = (seatPos - hrp.Position).Magnitude
-					})
-				end
+    local function moveToObjectHeight(dynamicTarget, height, moveSpeed)
+        bv.Velocity = Vector3.zero
+        repeat
+            local currentPos = getPosition(dynamicTarget)
+            if not currentPos then break end
+            
+            local targetPos = Vector3.new(currentPos.X, height, currentPos.Z)
+            local direction = (targetPos - hrp.Position).Unit
+            local distance = (targetPos - hrp.Position).Magnitude
+            
+            if distance <= 25 then
+                bv.Velocity = Vector3.zero
+                break
+            end
+            
+            bv.Velocity = direction * moveSpeed
+            task.wait()
+        until false
+        bv.Velocity = Vector3.zero
+    end
+
+    local function getVehicle(targetPos)
+        if character:GetAttribute("InVehicle") then return nil end
+
+        local vehicles = {}
+        for _, v in workspace.Vehicles:GetChildren() do
+            if v.Name == "Camaro" and v:FindFirstChild("Seat") then
+                local seatPos = v.Seat.Position
+                if not checkAboveHead(seatPos, {character, v}) then
+                    table.insert(vehicles, {
+                        vehicle = v,
+                        dist = (seatPos - hrp.Position).Magnitude
+                    })
+                end
+            end
+        end
+
+        if #vehicles == 0 then return nil end
+
+        table.sort(vehicles, function(a, b) return a.dist < b.dist end)
+
+        local nearest = vehicles[1]
+        local playerDist = (targetPos - hrp.Position).Magnitude
+
+        if playerDist <= nearest.dist then return nil end
+
+        local seatPos = nearest.vehicle.Seat.Position
+
+        moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
+        moveTo(Vector3.new(seatPos.X, 300, seatPos.Z), 100)
+        moveTo(seatPos, 100)
+
+        task.wait(0.2)
+        bv:Destroy()
+
+        repeat
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.E.Value, false, nil)
+            task.wait()
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.E.Value, false, nil)
+            task.wait(1)
+        until character.Humanoid.Sit == true
+
+        task.wait(0.2)
+        bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bv.Velocity = Vector3.zero
+        bv.Parent = hrp
+
+        return nearest.vehicle
+    end
+
+    local isDynamic = typeof(target) ~= "Vector3"
+    local targetPos = getPosition(target)
+
+    if not targetPos then
+        tpf = false
+        return
+    end
+
+    getVehicle(targetPos)
+
+    local oldspeed = speed
+    speed = character:GetAttribute("InVehicle") and 450 or 100
+
+    -- 1. Подъём на высоту 500 (статично)
+    moveTo(Vector3.new(hrp.Position.X, 500, hrp.Position.Z), speed)
+
+    speed = character:GetAttribute("InVehicle") and oldspeed or 100
+
+    -- 2. Движение к цели на высоте 500 (динамически если объект движется)
+    if isDynamic then
+        moveToObjectHeight(target, 500, speed)
+    else
+        moveTo(Vector3.new(targetPos.X, 500, targetPos.Z), speed)
+    end
+
+    speed = character:GetAttribute("InVehicle") and 450 or 100
+
+    -- 3. Спуск к цели (динамически если объект движется)
+    if isDynamic then
+        bv.Velocity = Vector3.zero
+        repeat
+            local currentPos = getPosition(target)
+            if not currentPos then break end
+            
+            local direction = (currentPos - hrp.Position).Unit
+            local distance = (currentPos - hrp.Position).Magnitude
+            
+            if distance <= 15 then
+                bv.Velocity = Vector3.zero
+                break
+            end
+            
+            bv.Velocity = direction * speed
+            task.wait()
+        until false
+        bv.Velocity = Vector3.zero
+    else
+        moveTo(Vector3.new(targetPos.X, targetPos.Y, targetPos.Z), speed)
+    end
+
+		spawn(function()
+			task.wait(.5)
+			local hum = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+			if hum then
+			   game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.E, false, nil) 
+				task.wait(0.1) 
+				game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.E, false, nil)
+			   wait(.2)
+			   hum.Parent.HumanoidRootPart.CFrame = CFrame.new(target.Position)
 			end
-		end
-
-		if #vehicles == 0 then return nil end
-
-		table.sort(vehicles, function(a, b) return a.dist < b.dist end)
-
-		local nearest = vehicles[1]
-		local playerDist = (pos - hrp.Position).Magnitude
-
-		if playerDist <= nearest.dist then return nil end
-
-		local seatPos = nearest.vehicle.Seat.Position
-
-		moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
-		moveTo(Vector3.new(seatPos.X, 300, seatPos.Z), 100)
-		moveTo(seatPos, 100)
-
-		task.wait(0.2)
-		bv:Destroy()
-
-		repeat
-			game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.E.Value, false, nil)
-			task.wait()
-			game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.E.Value, false, nil)
-			task.wait(1)
-		until character.Humanoid.Sit == true
-
-		task.wait(0.2)
-		bv = Instance.new("BodyVelocity")
-		bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-		bv.Velocity = Vector3.zero
-		bv.Parent = hrp
-
-		return nearest.vehicle
-	end
-
-	getVehicle()
-
-	local oldspeed = speed
-	speed = character:GetAttribute("InVehicle") and 450 or 100
-
-	moveTo(Vector3.new(hrp.Position.X, 500, hrp.Position.Z), speed)
-
-	speed = character:GetAttribute("InVehicle") and oldspeed or 100
-	moveTo(Vector3.new(pos.X, 500, pos.Z), speed)
-
-	speed = character:GetAttribute("InVehicle") and 450 or 100
-	moveTo(Vector3.new(pos.X, pos.Y, pos.Z), speed)
-
-	speed = oldspeed
-	task.wait(0.2)
-	bv:Destroy()
-	tpf = false
+		end)
+    speed = oldspeed
+    task.wait(0.2)
+    bv:Destroy()
+    tpf = false
 end
 
 local list = {
@@ -1154,11 +1239,22 @@ end)
 
 local r = {
 	[1] = "Drop",
-	[2] = "Train"
+	[2] = "Train",
+	[3] = "Plane"
 }
 
 teleport:Dropdown("Robbers",r,function(value)
-	
+	if value == "Plane" then
+		tp(workspace.Plane.CargoPlane)
+	elseif value == "Drop" then
+		tp(workspace.Drop.Root)
+	elseif value == "Train" then
+		if workspace.Trains:FindFirstChild("PassengerArmor") then
+			tp(workspace.Trains.PassengerArmor.Model.Cash:GetChildren()[1]) 
+		else
+			tp(workspace.Trains.BoxCar.Model.Box.Roof)
+		end
+	end
 end)
 
 while wait(1) do
