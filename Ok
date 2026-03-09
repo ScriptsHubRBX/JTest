@@ -1088,10 +1088,36 @@ function tp(target)
 
     local function getVehicle(targetPos)
         if character:GetAttribute("InVehicle") then return nil end
-
+		local py = hrp.Position.Y
+		local args = {
+					"Chassis",
+					"Camaro"
+				}
+				game:GetService("ReplicatedStorage"):WaitForChild("GarageSpawnVehicle"):FireServer(unpack(args))
+				wait(1)
+				if character:GetAttribute("InVehicle") then return end
+		if game:GetService("Players").LocalPlayer.TeamColor == BrickColor.new("Bright orange") then
+		moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
+		moveTo(Vector3.new(hrp.Position.X, py, hrp.Position.Z), 100)
+				wait(.2)
+        		bv:Destroy()
+				hrp.CFrame = CFrame.new(Vector3.new(hrp.Position.X, py, hrp.Position.Z))
+				wait(.3)
+		local args = {
+					"Chassis",
+					"Camaro"
+				}
+				game:GetService("ReplicatedStorage"):WaitForChild("GarageSpawnVehicle"):FireServer(unpack(args))
+				wait(1)
+				bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bv.Velocity = Vector3.zero
+        bv.Parent = hrp
+		end
+				if character:GetAttribute("InVehicle") then return end
         local vehicles = {}
         for _, v in workspace.Vehicles:GetChildren() do
-            if v.Name == "Camaro" and v:FindFirstChild("Seat") and not v:GetAttribute("VehicleHasDriver") then
+            if v.Name == "Camaro" and not v:GetAttribute("TeamRestrict") and v:FindFirstChild("Seat") and (not v:GetAttribute("VehicleHasDriver") or v:GetAttribute("VehicleHasDriver") == false) then
                 local seatPos = v.Seat.Position
                 if not checkAboveHead(seatPos, {character, v}) then
                     table.insert(vehicles, {
@@ -1113,11 +1139,15 @@ function tp(target)
 
         local seatPos = nearest.vehicle.Seat.Position
 		local s = nearest.vehicle.Seat
-
-        moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
-        moveTo(Vector3.new(seatPos.X, 300, seatPos.Z), 100)
-        moveTo(seatPos, 100)
-		hrp.CFrame = CFrame.new(seatPos + s.CFrame.RightVector * -5)
+		print((nearest.vehicle.Seat.Position - hrp.Position).magnitude)
+		if (nearest.vehicle.Seat.Position - hrp.Position).magnitude <= 20 then
+			hrp.CFrame = CFrame.new(seatPos + s.CFrame.RightVector * -5)
+		else
+			moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
+			moveTo(Vector3.new(seatPos.X, 300, seatPos.Z), 100)
+			moveTo(seatPos, 100)
+			hrp.CFrame = CFrame.new(seatPos + s.CFrame.RightVector * -5)
+		end
 
         task.wait(0.2)
         bv:Destroy()
@@ -1167,13 +1197,12 @@ function tp(target)
 			end
 			until tpf == false
 			end)
-    local oldspeed = speed
     speed = character:GetAttribute("InVehicle") and 450 or 100
 
     -- 1. Подъём на высоту 500 (статично)
     moveTo(Vector3.new(hrp.Position.X, 500, hrp.Position.Z), speed)
 
-    speed = character:GetAttribute("InVehicle") and oldspeed or 100
+    speed = character:GetAttribute("InVehicle") and 450 or 100
 
     -- 2. Движение к цели на высоте 500 (динамически если объект движется)
     if isDynamic then
@@ -1218,7 +1247,6 @@ function tp(target)
         moveTo(Vector3.new(targetPos.X, targetPos.Y, targetPos.Z), speed)
     end
 
-    speed = oldspeed
     task.wait(0.2)
     bv:Destroy()
     tpf = false
