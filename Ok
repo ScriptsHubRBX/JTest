@@ -1116,6 +1116,7 @@ function tp(target)
         moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
         moveTo(Vector3.new(seatPos.X, 300, seatPos.Z), 100)
         moveTo(seatPos, 100)
+		hrp.CFrame = CFrame.new(seatPos)
 
         task.wait(0.2)
         bv:Destroy()
@@ -1124,7 +1125,7 @@ function tp(target)
             game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.E.Value, false, nil)
             task.wait()
             game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.E.Value, false, nil)
-            task.wait(1)
+            task.wait(.3)
         until character.Humanoid.Sit == true
 
         task.wait(0.2)
@@ -1182,12 +1183,8 @@ function tp(target)
             task.wait()
         until false
         bv.Velocity = Vector3.zero
-    else
-        moveTo(Vector3.new(targetPos.X, targetPos.Y, targetPos.Z), speed)
-    end
-
 		spawn(function()
-			task.wait(.5)
+			task.wait(.3)
 			local hum = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 			if hum then
 			   game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.E, false, nil) 
@@ -1197,6 +1194,10 @@ function tp(target)
 			   hum.Parent.HumanoidRootPart.CFrame = CFrame.new(target.Position)
 			end
 		end)
+    else
+        moveTo(Vector3.new(targetPos.X, targetPos.Y, targetPos.Z), speed)
+    end
+
     speed = oldspeed
     task.wait(0.2)
     bv:Destroy()
@@ -1252,7 +1253,12 @@ teleport:Dropdown("Robbers",r,function(value)
 		if workspace.Trains:FindFirstChild("PassengerArmor") then
 			tp(workspace.Trains.PassengerArmor.Model.Cash:GetChildren()[1]) 
 		else
-			tp(workspace.Trains.BoxCar.Model.Box.Roof)
+			for i, v in workspace.Trains:GetChildren() do
+				if v:FindFirstChild("Skeleton") then
+					tp(v.Model.Box.Roof)
+					break
+				end
+			end
 		end
 	end
 end)
