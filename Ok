@@ -1091,7 +1091,7 @@ function tp(target)
 
         local vehicles = {}
         for _, v in workspace.Vehicles:GetChildren() do
-            if v.Name == "Camaro" and v:FindFirstChild("Seat") then
+            if v.Name == "Camaro" and v:FindFirstChild("Seat") and not v:GetAttribute("VehicleHasDriver") then
                 local seatPos = v.Seat.Position
                 if not checkAboveHead(seatPos, {character, v}) then
                     table.insert(vehicles, {
@@ -1112,11 +1112,12 @@ function tp(target)
         if playerDist <= nearest.dist then return nil end
 
         local seatPos = nearest.vehicle.Seat.Position
+		local s = nearest.vehicle.Seat
 
         moveTo(Vector3.new(hrp.Position.X, 300, hrp.Position.Z), 100)
         moveTo(Vector3.new(seatPos.X, 300, seatPos.Z), 100)
         moveTo(seatPos, 100)
-		hrp.CFrame = CFrame.new(seatPos)
+		hrp.CFrame = CFrame.new(seatPos + s.CFrame.RightVector * -5)
 
         task.wait(0.2)
         bv:Destroy()
@@ -1126,6 +1127,14 @@ function tp(target)
             task.wait()
             game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.E.Value, false, nil)
             task.wait(.3)
+			if character.Humanoid.Sit == false then
+				local args = {
+					"Chassis",
+					"Camaro"
+				}
+				game:GetService("ReplicatedStorage"):WaitForChild("GarageSpawnVehicle"):FireServer(unpack(args))
+
+			end
         until character.Humanoid.Sit == true
 
         task.wait(0.2)
@@ -1146,7 +1155,18 @@ function tp(target)
     end
 
     getVehicle(targetPos)
+	spawn(function()
+	repeat wait()
+	if character.Humanoid.Sit == false then
+				local args = {
+					"Chassis",
+					"Camaro"
+				}
+				game:GetService("ReplicatedStorage"):WaitForChild("GarageSpawnVehicle"):FireServer(unpack(args))
 
+			end
+			until tpf == false
+			end)
     local oldspeed = speed
     speed = character:GetAttribute("InVehicle") and 450 or 100
 
@@ -1203,6 +1223,10 @@ function tp(target)
     bv:Destroy()
     tpf = false
 end
+
+game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").Died:Connect(function()
+	tpf = false
+end)
 
 local list = {
 ["Power Plant"] = Vector3.new(83, 21, 2342),
