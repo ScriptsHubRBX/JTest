@@ -1,3 +1,24 @@
+
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+function missing(t, f, fallback)
+    if type(f) == t then return f end
+    return fallback
+end
+
+queueteleport = missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
+
+local TeleportCheck = false
+
+Players.LocalPlayer.OnTeleport:Connect(function(State)
+    if (not TeleportCheck) and queueteleport then
+        TeleportCheck = true
+        -- УБРАН ПРОБЕЛ В КОНЦЕ URL!
+        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ScriptsHubRBX/Script/refs/heads/main/Script'))()")
+    end
+end)
+
 for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
 	if v.Name == "ui" then
 		v:Destroy()
@@ -1318,11 +1339,11 @@ teleport:Dropdown("Robbers",r,function(value)
 		end
 	end
 end)
+
+
 teleport:Button("Server Hop",function()
 	local HttpService = game:GetService("HttpService")
 	local servers = {}
-	local Players = game:GetService("Players")
-	local TeleportService = game:GetService("TeleportService")
 	local PlaceId = game.PlaceId
 	local req = game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true")
 	local body = HttpService:JSONDecode(req)
@@ -1341,7 +1362,6 @@ teleport:Button("Server Hop",function()
 		return notify("Serverhop", "Couldn't find a server.")
 	end
 end)
-
 while wait(1) do
 	pcall(function()
 		for i, v in game:GetService("Players"):GetChildren() do
