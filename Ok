@@ -831,9 +831,13 @@ robbers:Button("Bank Creator",function()
 end)
 
 robbers:Button("Bank Rising",function()
-	game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(.3,Enum.EasingStyle.Linear),{CFrame = CFrame.new(56, 18.92, 833)}):Play()
+	local t = 19.08
+game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Anchored = true
+game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(.3,Enum.EasingStyle.Linear),{CFrame = CFrame.new(56, t, 833)}):Play()
 	wait(.3)
-	game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(.3,Enum.EasingStyle.Linear),{CFrame = CFrame.new(56, 18.92, 853)}):Play()
+	game:GetService("TweenService"):Create(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(.3,Enum.EasingStyle.Linear),{CFrame = CFrame.new(56, t, 853)}):Play()
+	wait(.3)
+	game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Anchored = false
 end)
 
 
