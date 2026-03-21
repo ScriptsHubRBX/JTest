@@ -1,0 +1,24 @@
+const { WebcastPushConnection } = require('tiktok-live-connector');
+const express = require('express');
+
+const app = express();
+let messages = [];
+
+const tiktok = new WebcastPushConnection('USERNAME');
+
+tiktok.connect();
+
+tiktok.on('chat', data => {
+    messages.push({
+        user: data.nickname,
+        text: data.comment
+    });
+
+    if (messages.length > 50) messages.shift();
+});
+
+app.get('/messages', (req, res) => {
+    res.json(messages);
+});
+
+app.listen(3000, () => console.log('Server started'));
