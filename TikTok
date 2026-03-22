@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 let messages = [];
 
-const tiktok = new WebcastPushConnection('USERNAME');
+const tiktok = new WebcastPushConnection('darksun0966');
 
 tiktok.connect();
 
