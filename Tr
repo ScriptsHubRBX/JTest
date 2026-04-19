@@ -88,7 +88,6 @@ game:GetService("Players").LocalPlayer.PlayerGui.AppUI.ChildAdded:Connect(functi
 				for i, f in game:GetService("Players"):GetChildren() do
 					if f.Character:FindFirstChild("Light") then
 						f.Character.Light:Destroy()
-						f.Character.BillboardGui:Destroy()
 					end
 					if f.Character:FindFirstChild("BillboardGui") then
 						f.Character.BillboardGui:Destroy()
