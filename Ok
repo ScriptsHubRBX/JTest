@@ -421,7 +421,7 @@ misc:Toggle("Delete Turrets",true,function(value)
 end)
 
 function killed()
-	while wait(2) and _G.Killed do
+	while wait(.5) and _G.Killed do
 		pcall(function()
 			if workspace:FindFirstChild("Drop") and workspace:FindFirstChild("Drop"):FindFirstChild("NPCs") then
 				for i, f in game:GetService("Workspace").Drop.NPCs:GetChildren() do
