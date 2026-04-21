@@ -437,11 +437,10 @@ function killed()
 					end
 				end
 			end
-			if workspace.MansionRobbery.GuardsFolder:GetChildren()[1] then
-				for i, f in workspace.MansionRobbery.GuardsFolder:GetChildren() do
-					if (f.HumanoidRootPart.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude <= 300 then
-						f.Humanoid.Health = 0
-					end
+			for i, f in workspace.MansionRobbery.GuardsFolder:GetChildren() do
+				if (f.HumanoidRootPart.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude <= 300 then
+					f.NPCDestObj.Value = workspace.MansionRobbery.ActiveBoss.HumanoidRootPart
+					f.NPCLookAtObj.Value = workspace.MansionRobbery.ActiveBoss.HumanoidRootPart
 				end
 			end
 		end)
