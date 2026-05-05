@@ -1,0 +1,4 @@
+local args = {
+	"TRADE_WORLD"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("TeleportToWorldFromTeamSwitchRemote"):FireServer(unpack(args))
