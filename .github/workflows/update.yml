@@ -1,8 +1,11 @@
 name: Update Values
 on:
   schedule:
-    - cron: '0 * * * *'  # каждый час
+    - cron: '0 * * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update:
@@ -10,8 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Fetch values
-        run: |
-          curl -sL "https://api.jailbreakchangelogs.xyz/items/list" > values.json
+        run: curl -sL "https://api.jailbreakchangelogs.xyz/items/list" > values.json
       - name: Commit
         run: |
           git config user.name "bot"
