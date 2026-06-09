@@ -36,15 +36,15 @@ ui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 coroutine.wrap(
 	function()
 		while wait() do
-			lib.RainbowColorValue = lib.RainbowColorValue + 1 / 255
-			lib.HueSelectionPosition = lib.HueSelectionPosition + 1
+			_G.lib.RainbowColorValue = _G.lib.RainbowColorValue + 1 / 255
+			_G.lib.HueSelectionPosition = _G.lib.HueSelectionPosition + 1
 
-			if lib.RainbowColorValue >= 1 then
-				lib.RainbowColorValue = 0
+			if _G.lib.RainbowColorValue >= 1 then
+				_G.lib.RainbowColorValue = 0
 			end
 
-			if lib.HueSelectionPosition == 80 then
-				lib.HueSelectionPosition = 0
+			if _G.lib.HueSelectionPosition == 80 then
+				_G.lib.HueSelectionPosition = 0
 			end
 		end
 	end
@@ -106,7 +106,7 @@ local function MakeDraggable(topbarobject, object)
 	)
 end
 
-function lib:Window(text, preset, closebind)
+function _G.lib:Window(text, preset, closebind)
 	CloseBind = closebind or Enum.KeyCode.RightControl
 	PresetColor = preset or Color3.fromRGB(44, 120, 224)
 	fs = false
@@ -263,11 +263,11 @@ end
 	TabFolder.Name = "TabFolder"
 	TabFolder.Parent = Main
 
-	function lib:ChangePresetColor(toch)
+	function _G.lib:ChangePresetColor(toch)
 		PresetColor = toch
 	end
 
-	function lib:Notification(texttitle, textdesc, textbtn)
+	function _G.lib:Notification(texttitle, textdesc, textbtn)
 		local NotificationHold = Instance.new("TextButton")
 		local NotificationFrame = Instance.new("Frame")
 		local OkayBtn = Instance.new("TextButton")
@@ -1617,11 +1617,11 @@ end
 						OldHueSelectionPosition = HueSelection.Position
 
 						while RainbowColorPicker do
-							BoxColor.BackgroundColor3 = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
-							Color.BackgroundColor3 = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
+							BoxColor.BackgroundColor3 = Color3.fromHSV(_G.lib.RainbowColorValue, 1, 1)
+							Color.BackgroundColor3 = Color3.fromHSV(_G.lib.RainbowColorValue, 1, 1)
 
 							ColorSelection.Position = UDim2.new(1, 0, 0, 0)
-							HueSelection.Position = UDim2.new(0.48, 0, 0, lib.HueSelectionPosition)
+							HueSelection.Position = UDim2.new(0.48, 0, 0, _G.lib.HueSelectionPosition)
 
 							pcall(callback, BoxColor.BackgroundColor3)
 							wait()
@@ -1857,4 +1857,5 @@ end
 	end
 	return tabhold
 end
-return lib
+_G.lib:Window("Test")
+return _G.lib
