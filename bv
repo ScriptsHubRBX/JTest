@@ -1862,5 +1862,4 @@ end
 	end
 	return tabhold
 end
-_G.lib:Window("Test")
 return _G.lib
