@@ -192,8 +192,8 @@ function _G.lib:Window(text, preset, closebind)
 	Timer.TextSize = 12.000
 	Timer.TextXAlignment = Enum.TextXAlignment.Left
 	Timer.Visible = false
- if _G.table then
-	for name, data in pairs(_G.table) do
+ if _G.list then
+	for name, data in pairs(_G.list) do
 	task.spawn(function()
 		local playerName = string.lower(game:GetService("Players").LocalPlayer.Name)
 		name = string.lower(name)
