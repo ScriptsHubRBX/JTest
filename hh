@@ -187,51 +187,51 @@ function lib:Window(text, preset, closebind)
 	Timer.TextSize = 12.000
 	Timer.TextXAlignment = Enum.TextXAlignment.Left
 	Timer.Visible = false
-	for name, data in pairs(_G.hyper) do
-	// task.spawn(function()
-	// 	local playerName = string.lower(game:GetService("Players").LocalPlayer.Name)
-	// 	name = string.lower(name)
+	--for name, data in pairs(_G.hyper) do
+	--  task.spawn(function()
+	--  	local playerName = string.lower(game:GetService("Players").LocalPlayer.Name)
+	--  	name = string.lower(name)
 
-	// 	if playerName == name or string.find(playerName, name, 1, true) then
-	// 		if type(data) == "table" and data.m and data.d and data.h then
-	// 			Timer.Visible = true
+	--  	if playerName == name or string.find(playerName, name, 1, true) then
+	--  		if type(data) == "table" and data.m and data.d and data.h then
+	--  			Timer.Visible = true
 
-	// 			local targetDate = DateTime.fromUniversalTime(
-	// 				2026,
-	// 				data.m,
-	// 				data.d,
-	// 				data.h,
-	// 				0,
-	// 				0
-	// 			)
+	--  			local targetDate = DateTime.fromUniversalTime(
+	--  				2026,
+	-- 				data.m,
+	-- 				data.d,
+	--  				data.h,
+	-- 				0,
+	--  				0
+	--  			)
 
-	// 			while task.wait(1) do
-	// 				local now = DateTime.now()
-	// 				local diff = targetDate.UnixTimestamp - now.UnixTimestamp
+	--  			while task.wait(1) do
+	--  				local now = DateTime.now()
+	--  				local diff = targetDate.UnixTimestamp - now.UnixTimestamp
 
-	// 				if diff <= 0 then
-	// 					game:GetService("Players").LocalPlayer:Kick("Please buy the script")
-	// 					Timer.Text = "00:00:00:00"
-	// 					break
-	// 				else
-	// 					local days = math.floor(diff / 86400)
-	// 					local hours = math.floor((diff % 86400) / 3600)
-	// 					local minutes = math.floor((diff % 3600) / 60)
-	// 					local seconds = math.floor(diff % 60)
+	--  				if diff <= 0 then
+	--  					game:GetService("Players").LocalPlayer:Kick("Please buy the script")
+	--  					Timer.Text = "00:00:00:00"
+	--  					break
+	--  				else
+	--  					local days = math.floor(diff / 86400)
+	--  					local hours = math.floor((diff % 86400) / 3600)
+	--  					local minutes = math.floor((diff % 3600) / 60)
+	--  					local seconds = math.floor(diff % 60)
 
-	// 					Timer.Text = string.format(
-	// 						"%02d:%02d:%02d:%02d",
-	// 						days,
-	// 						hours,
-	// 						minutes,
-	// 						seconds
-	// 					)
-	// 				end
-	// 			end
-	// 		end
-	// 	end
-	// end)
-end
+	--  					Timer.Text = string.format(
+	--  						"%02d:%02d:%02d:%02d",
+	-- 						days,
+	--  						hours,
+	--  						minutes,
+	--  						seconds
+	--  					)
+	--  				end
+	--  			end
+	--  		end
+	--  	end
+	--  end)
+--nd
 	DragFrame.Name = "DragFrame"
 	DragFrame.Parent = Main
 	DragFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
