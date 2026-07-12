@@ -1,3 +1,4 @@
+_G.hyper = {["milatakun"] = true}
 local lib = {RainbowColorValue = 0, HueSelectionPosition = 0}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -172,6 +173,34 @@ function lib:Window(text, preset, closebind)
 	Title.Font = Enum.Font.GothamSemibold
 	Title.Text = text
 	Title.TextColor3 = Color3.fromRGB(255, 205, 0)
+	spawn(function()
+		local TweenService = game:GetService("TweenService")
+
+		local colors = {
+		    Color3.fromRGB(255, 0, 0),
+		    Color3.fromRGB(255, 165, 0),
+		    Color3.fromRGB(255, 255, 0),
+		    Color3.fromRGB(0, 255, 0),
+		    Color3.fromRGB(0, 255, 255),
+		    Color3.fromRGB(0, 0, 255),
+		    Color3.fromRGB(255, 0, 255),
+		}
+		
+		local tweenInfo = TweenInfo.new(
+		    2,
+		    Enum.EasingStyle.Sine,
+		    Enum.EasingDirection.InOut
+		)
+		
+		local index = 1
+		
+		while true do
+		    index = index % #colors + 1
+		    local tween = TweenService:Create(Title, tweenInfo, {TextColor3 = colors[index]})
+		    tween:Play()
+		    tween.Completed:Wait()
+		end
+	end)
 	Title.TextSize = 12.000
 	Title.TextXAlignment = Enum.TextXAlignment.Left
 
