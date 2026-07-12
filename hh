@@ -171,7 +171,7 @@ function lib:Window(text, preset, closebind)
 	Title.Size = UDim2.new(0, 200, 0, 23)
 	Title.Font = Enum.Font.GothamSemibold
 	Title.Text = text
-	Title.TextColor3 = Color3.fromRGB(255, 205, 0)
+	Title.TextColor3 = Color3.fromRGB(255, 0, 0)
 	spawn(function()
 		local TweenService = game:GetService("TweenService")
 
