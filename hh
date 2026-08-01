@@ -7,7 +7,7 @@ local Mouse = LocalPlayer:GetMouse()
 local PresetColor = Color3.fromRGB(44, 120, 224)
 local CloseBind = Enum.KeyCode.RightControl
 local API_BASE_URL = "https://service-creator-hub--scripthubrbx.replit.app/api"
-local SERVICE_ID   = 3   -- замени на ID своего сервиса из дашборда
+local SERVICE_ID   = 37   -- замени на ID своего сервиса из дашборда
 -- ============================================================
 
 local Players        = game:GetService("Players")
