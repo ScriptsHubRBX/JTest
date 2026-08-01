@@ -6,6 +6,84 @@ local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local PresetColor = Color3.fromRGB(44, 120, 224)
 local CloseBind = Enum.KeyCode.RightControl
+local API_BASE_URL = "https://service-creator-hub--scripthubrbx.replit.app/api"
+local SERVICE_ID   = 3   -- замени на ID своего сервиса из дашборда
+-- ============================================================
+
+local Players        = game:GetService("Players")
+local RunService     = game:GetService("RunService")
+local HttpService    = game:GetService("HttpService")
+
+local player    = Players.LocalPlayer
+local HEARTBEAT_INTERVAL = 15  -- секунды между heartbeat
+
+-- ──────────────────────────────────────────────────────────────
+--  HTTP через экзекутор (совместимость с Synapse X, KRNL, Fluxus и др.)
+-- ──────────────────────────────────────────────────────────────
+local httpReq = (syn and syn.request)
+             or (http and http.request)
+             or (fluxus and fluxus.request)
+             or request
+             or http_request
+
+local function httpPost(endpoint, data)
+	if not httpReq then
+		warn("[NexusKey] HTTP функция не найдена в этом экзекуторе!")
+		return nil
+	end
+	local body = HttpService:JSONEncode(data)
+	local ok, res = pcall(function()
+		return httpReq({
+			Url     = API_BASE_URL .. endpoint,
+			Method  = "POST",
+			Headers = { ["Content-Type"] = "application/json" },
+			Body    = body,
+		})
+	end)
+	if not ok then
+		warn("[NexusKey] HTTP ошибка: " .. tostring(res))
+		return nil
+	end
+	if res.StatusCode ~= 200 then
+		warn("[NexusKey] Статус: " .. tostring(res.StatusCode) .. " | " .. tostring(res.Body))
+		return nil
+	end
+	local dok, decoded = pcall(function()
+		return HttpService:JSONDecode(res.Body)
+	end)
+	if not dok then
+		warn("[NexusKey] Ошибка декодирования JSON: " .. tostring(res.Body))
+		return nil
+	end
+	return decoded
+end
+
+local function checkHwid()
+	local response = httpPost("/roblox/check-hwid", {
+		hwid      = tostring(gethwid()),
+		serviceId = SERVICE_ID,
+	})
+	if response == nil then return false, nil, nil end
+	return response.found, response.keyValue, response.time
+end
+local f,k,t = checkHwid()
+local heartbeatConnection
+local function startHeartbeat()
+	local elapsed = 0
+	heartbeatConnection = RunService.Heartbeat:Connect(function(dt)
+		elapsed = elapsed + dt
+		if elapsed >= HEARTBEAT_INTERVAL then
+			elapsed = 0
+			task.spawn(function()
+				httpPost("/roblox/heartbeat", {
+					hwid      = tostring(gethwid()),
+					username  = player.Name,
+					serviceId = SERVICE_ID,
+				})
+			end)
+		end
+	end)
+end
 
 -- ========== СИСТЕМА СОХРАНЕНИЯ БИНД ==========
 local HttpService = game:GetService("HttpService")
@@ -215,51 +293,57 @@ function lib:Window(text, preset, closebind)
 	Timer.TextSize = 12.000
 	Timer.TextXAlignment = Enum.TextXAlignment.Left
 	Timer.Visible = false
-	for name, data in pairs(_G.hyper) do
-	 task.spawn(function()
-	  	local playerName = string.lower(game:GetService("Players").LocalPlayer.Name)
-	  	name = string.lower(name)
+	task.spawn(function()
+        Timer.Visible = true
+		print(t)
+    if t then
 
-	 	if playerName == name or string.find(playerName, name, 1, true) then
-	  		if type(data) == "table" and data.m and data.d and data.h then
-	 			Timer.Visible = true
+        local now = DateTime.now():ToUniversalTime()
 
-	  			local targetDate = DateTime.fromUniversalTime(
-	 				2026,
-	 				data.m,
-	 				data.d,
-	  				data.h,
-	 				0,
-	  				0
-	  			)
+        -- добавляем месяцы к текущей дате, с переносом года
+        local newMonth = now.Month + t.m
+        local newYear = now.Year
+        while newMonth > 12 do
+            newMonth -= 12
+            newYear += 1
+        end
 
-	 			while task.wait(1) do
-	  				local now = DateTime.now()
-	  				local diff = targetDate.UnixTimestamp - now.UnixTimestamp
+        -- база: текущий день/час/мин/сек, но с новым месяцем/годом
+        local baseDate = DateTime.fromUniversalTime(
+            newYear,
+            newMonth,
+            now.Day,
+            now.Hour,
+            now.Minute,
+            now.Second
+        )
 
-	  				if diff <= 0 then
-	  					game:GetService("Players").LocalPlayer:Kick("Please buy the script")
-	  					Timer.Text = "00:00:00:00"
-	 					break
-	  				else
-	  					local days = math.floor(diff / 86400)
-	  					local hours = math.floor((diff % 86400) / 3600)
-	  					local minutes = math.floor((diff % 3600) / 60)
-	  					local seconds = math.floor(diff % 60)
+        -- дни и часы добавляем уже в секундах поверх базы
+        local targetTimestamp = baseDate.UnixTimestamp + (t.d * 86400) + (t.h * 3600)
+        local targetDate = DateTime.fromUnixTimestamp(targetTimestamp)
 
-	  					Timer.Text = string.format(
-	  						"%02d:%02d:%02d:%02d",
-	 						days,
-	  						hours,
-	  						minutes,
-	  						seconds
-	  					)
-	  				end
-	  			end
-	  		end
-	 	end
-	  end)
-end
+        while task.wait(1) do
+            local nowTime = DateTime.now()
+            local diff = targetDate.UnixTimestamp - nowTime.UnixTimestamp
+
+            if diff <= 0 then
+                --game:GetService("Players").LocalPlayer:Kick("Please buy the script")
+                Timer.Text = "00:00:00:00"
+                break
+            else
+                local days = math.floor(diff / 86400)
+                local hours = math.floor((diff % 86400) / 3600)
+                local minutes = math.floor((diff % 3600) / 60)
+                local seconds = math.floor(diff % 60)
+
+                Timer.Text = string.format(
+                    "%02d:%02d:%02d:%02d",
+                    days, hours, minutes, seconds
+                )
+            end
+        end
+    end
+end)
 	DragFrame.Name = "DragFrame"
 	DragFrame.Parent = Main
 	DragFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
