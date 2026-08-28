@@ -6,8 +6,8 @@ local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local PresetColor = Color3.fromRGB(44, 120, 224)
 local CloseBind = Enum.KeyCode.RightControl
-local API_BASE_URL = "https://service-creator-hub--scripthubrbx.replit.app/api"
-local SERVICE_ID   = 37   -- замени на ID своего сервиса из дашборда
+local API_BASE_URL = "https://nexus-key-dashboard.replit.app/api"
+local SERVICE_ID   = 6   -- замени на ID своего сервиса из дашборда
 -- ============================================================
 
 local Players        = game:GetService("Players")
@@ -293,57 +293,47 @@ function lib:Window(text, preset, closebind)
 	Timer.TextSize = 12.000
 	Timer.TextXAlignment = Enum.TextXAlignment.Left
 	Timer.Visible = false
+        function tickTimer(t)
+    -- переводим всё в секунды
+			local total = t.d * 86400 + t.h * 3600 + t.m * 60 + t.s
+
+			-- уменьшаем на 1 секунду, не уходя в минус
+			total = math.max(0, total - 1)
+
+			-- раскладываем обратно на d/h/m/s
+			t.d = math.floor(total / 86400)
+			total = total % 86400
+			t.h = math.floor(total / 3600)
+			total = total % 3600
+			t.m = math.floor(total / 60)
+			t.s = total % 60
+
+			-- строка с ведущими нулями
+			local str
+			if t.d > 0 then
+				str = string.format("%02d:%02d:%02d:%02d", t.d, t.h, t.m, t.s)
+			else
+				str = string.format("%02d:%02d:%02d", t.h, t.m, t.s)
+			end
+
+			return str, total > 0, total -- второй параметр: true пока время не кончилось
+		end
 	task.spawn(function()
-        Timer.Visible = true
-		print(t)
-    if t then
+			Timer.Visible = true
+		if t then
 
-        local now = DateTime.now():ToUniversalTime()
-
-        -- добавляем месяцы к текущей дате, с переносом года
-        local newMonth = now.Month + t.m
-        local newYear = now.Year
-        while newMonth > 12 do
-            newMonth -= 12
-            newYear += 1
-        end
-
-        -- база: текущий день/час/мин/сек, но с новым месяцем/годом
-        local baseDate = DateTime.fromUniversalTime(
-            newYear,
-            newMonth,
-            now.Day,
-            now.Hour,
-            now.Minute,
-            now.Second
-        )
-
-        -- дни и часы добавляем уже в секундах поверх базы
-        local targetTimestamp = baseDate.UnixTimestamp + (t.d * 86400) + (t.h * 3600)
-        local targetDate = DateTime.fromUnixTimestamp(targetTimestamp)
-
-        while task.wait(1) do
-            local nowTime = DateTime.now()
-            local diff = targetDate.UnixTimestamp - nowTime.UnixTimestamp
-
-            if diff <= 0 then
-                --game:GetService("Players").LocalPlayer:Kick("Please buy the script")
-                Timer.Text = "00:00:00:00"
-                break
-            else
-                local days = math.floor(diff / 86400)
-                local hours = math.floor((diff % 86400) / 3600)
-                local minutes = math.floor((diff % 3600) / 60)
-                local seconds = math.floor(diff % 60)
-
-                Timer.Text = string.format(
-                    "%02d:%02d:%02d:%02d",
-                    days, hours, minutes, seconds
-                )
-            end
-        end
-    end
-end)
+			while task.wait(1) do
+			local str, f = tickTimer(t)
+				if f == false then
+					game:GetService("Players").LocalPlayer:Kick("Please buy the script")
+					Timer.Text = "00:00:00:00"
+					break
+				else
+					Timer.Text = str
+				end
+			end
+		end
+	end)
 	DragFrame.Name = "DragFrame"
 	DragFrame.Parent = Main
 	DragFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1967,4 +1957,5 @@ end)
 	end
 	return tabhold
 end
+lib:Window("pr")
 return lib
