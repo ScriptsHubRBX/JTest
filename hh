@@ -6,84 +6,6 @@ local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local PresetColor = Color3.fromRGB(44, 120, 224)
 local CloseBind = Enum.KeyCode.RightControl
-local API_BASE_URL = "https://nexus-key-dashboard.replit.app/api"
-local SERVICE_ID   = 6   -- замени на ID своего сервиса из дашборда
--- ============================================================
-
-local Players        = game:GetService("Players")
-local RunService     = game:GetService("RunService")
-local HttpService    = game:GetService("HttpService")
-
-local player    = Players.LocalPlayer
-local HEARTBEAT_INTERVAL = 15  -- секунды между heartbeat
-
--- ──────────────────────────────────────────────────────────────
---  HTTP через экзекутор (совместимость с Synapse X, KRNL, Fluxus и др.)
--- ──────────────────────────────────────────────────────────────
-local httpReq = (syn and syn.request)
-             or (http and http.request)
-             or (fluxus and fluxus.request)
-             or request
-             or http_request
-
-local function httpPost(endpoint, data)
-	if not httpReq then
-		warn("[NexusKey] HTTP функция не найдена в этом экзекуторе!")
-		return nil
-	end
-	local body = HttpService:JSONEncode(data)
-	local ok, res = pcall(function()
-		return httpReq({
-			Url     = API_BASE_URL .. endpoint,
-			Method  = "POST",
-			Headers = { ["Content-Type"] = "application/json" },
-			Body    = body,
-		})
-	end)
-	if not ok then
-		warn("[NexusKey] HTTP ошибка: " .. tostring(res))
-		return nil
-	end
-	if res.StatusCode ~= 200 then
-		warn("[NexusKey] Статус: " .. tostring(res.StatusCode) .. " | " .. tostring(res.Body))
-		return nil
-	end
-	local dok, decoded = pcall(function()
-		return HttpService:JSONDecode(res.Body)
-	end)
-	if not dok then
-		warn("[NexusKey] Ошибка декодирования JSON: " .. tostring(res.Body))
-		return nil
-	end
-	return decoded
-end
-
-local function checkHwid()
-	local response = httpPost("/roblox/check-hwid", {
-		hwid      = tostring(gethwid()),
-		serviceId = SERVICE_ID,
-	})
-	if response == nil then return false, nil, nil end
-	return response.found, response.keyValue, response.time
-end
-local f,k,t = checkHwid()
-local heartbeatConnection
-local function startHeartbeat()
-	local elapsed = 0
-	heartbeatConnection = RunService.Heartbeat:Connect(function(dt)
-		elapsed = elapsed + dt
-		if elapsed >= HEARTBEAT_INTERVAL then
-			elapsed = 0
-			task.spawn(function()
-				httpPost("/roblox/heartbeat", {
-					hwid      = tostring(gethwid()),
-					username  = player.Name,
-					serviceId = SERVICE_ID,
-				})
-			end)
-		end
-	end)
-end
 
 -- ========== СИСТЕМА СОХРАНЕНИЯ БИНД ==========
 local HttpService = game:GetService("HttpService")
@@ -295,32 +217,32 @@ function lib:Window(text, preset, closebind)
 	Timer.Visible = false
         function tickTimer(t)
     -- переводим всё в секунды
-			local total = t.d * 86400 + t.h * 3600 + t.m * 60 + t.s
+			local total = _G.Pro.d * 86400 + _G.Pro.h * 3600 + _G.Pro.m * 60 + _G.Pro.s
 
 			-- уменьшаем на 1 секунду, не уходя в минус
 			total = math.max(0, total - 1)
 
 			-- раскладываем обратно на d/h/m/s
-			t.d = math.floor(total / 86400)
+			_G.Pro.d = math.floor(total / 86400)
 			total = total % 86400
-			t.h = math.floor(total / 3600)
+			_G.Pro.h = math.floor(total / 3600)
 			total = total % 3600
-			t.m = math.floor(total / 60)
-			t.s = total % 60
+			_G.Pro.m = math.floor(total / 60)
+			_G.Pro.s = total % 60
 
 			-- строка с ведущими нулями
 			local str
-			if t.d > 0 then
-				str = string.format("%02d:%02d:%02d:%02d", t.d, t.h, t.m, t.s)
+			if _G.Pro.d > 0 then
+				str = string.format("%02d:%02d:%02d:%02d", _G.Pro.d, _G.Pro.h, _G.Pro.m, _G.Pro.s)
 			else
-				str = string.format("%02d:%02d:%02d", t.h, t.m, t.s)
+				str = string.format("%02d:%02d:%02d", _G.Pro.h, _G.Pro.m, _G.Pro.s)
 			end
 
 			return str, total > 0, total -- второй параметр: true пока время не кончилось
 		end
 	task.spawn(function()
 			Timer.Visible = true
-		if t then
+		if _G.Pro then
 
 			while task.wait(1) do
 			local str, f = tickTimer(t)
@@ -1957,5 +1879,4 @@ function lib:Window(text, preset, closebind)
 	end
 	return tabhold
 end
-lib:Window("pr")
 return lib
